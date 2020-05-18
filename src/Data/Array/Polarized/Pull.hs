@@ -1,8 +1,58 @@
 {-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
--- | This module is intended to be imported qualified, e.g.
+-- | This module provides pull arrays
+--
+-- Please import this module qualified for clarity and to avoid
+-- name clashes.
+--
+-- == Example
+--
+-- > import Data.Array.Polarized
+-- > import qualified Data.Array.Polarized.Push as Push
 -- > import qualified Data.Array.Polarized.Pull as Pull
+-- > import Data.Vector (Vector, (!), fromList)
+-- > import qualified Prelude as P
+-- >
+-- > pullArrExample :: IO ()
+-- > pullArrExample = do
+-- >   x <- inputVectorX
+-- >   y <- inputVectorY
+-- >   z <- inputVectorZ
+-- >   let x_pull = Pull.fromVector x
+-- >   let y_pull = Pull.fromVector y
+-- >   let z_pull = Pull.fromVector z
+-- >   let nsum = normSumExample x_pull y_pull z_pull
+-- >   putStrLn P.$ "norm sum is " ++ show nsum
+-- >
+-- > normSumExample :: Pull Int -> Pull Int -> Pull Int -> Double
+-- > normSumExample x y z = norm (sumV (sumV x y) z)
+-- >
+-- > sumV :: Pull Int #-> Pull Int #-> Pull Int
+-- > sumV = Pull.zipWith (Linear.+)
+-- >
+-- > norm :: Pull Int -> Double
+-- > norm arr = sqrt P.$ fromIntegral P.$
+-- >   Pull.foldr (Linear.+) 0 (Linear.fmap square arr)
+-- >
+-- > square :: Int #-> Int
+-- > square i = fromDup (dup2 i)
+-- >   where
+-- >     fromDup :: (Int, Int) #-> Int
+-- >     fromDup (i,j) = i Linear.* j
+-- >
+-- > -- | Query from environment
+-- > inputVectorX :: IO (Vector Int)
+-- > inputVectorX = return (fromList [1..100])
+-- >
+-- > -- | Query from environment
+-- > inputVectorY :: IO (Vector Int)
+-- > inputVectorY = return (fromList (map (\x -> (7 * (x+3)) `div` 11) [1..100]))
+-- >
+-- > -- | Query from environment
+-- > inputVectorZ :: IO (Vector Int)
+-- > inputVectorZ = return (fromList [negate i | i <- [1..100]])
+--
 module Data.Array.Polarized.Pull
   ( Array
   , zip, zipWith
