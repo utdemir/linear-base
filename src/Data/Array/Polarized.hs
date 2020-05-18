@@ -47,7 +47,7 @@
 -- > import qualified Data.Array.Polarized.Pull as Pull
 -- > import qualified Data.Functor.Linear as Linear
 -- > import Data.Vector (Vector, (!), fromList)
--- > import Prelude hiding ( Num(..), ($) )
+-- > import Prelude
 -- >
 -- > type Pull a = Pull.Array a
 -- > type Push a = Push.Array a
@@ -73,7 +73,7 @@
 -- > multThree arr = Linear.fmap (* 3) arr
 -- >
 -- > addCoeff :: Pull Int -> Pull Int #-> Pull Int
--- > addCoeff arr = Pull.zipWith (Linear.+) arr
+-- > addCoeff arr = Pull.zipWith (+) arr
 -- >
 -- > -- | Takes the difference between elements
 -- > -- which is common in differentials
