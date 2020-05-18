@@ -3,17 +3,26 @@
 
 -- | This module provides pull arrays
 --
--- Please import this module qualified for clarity and to avoid
+-- Use pull arrays to force fusion in a computation that only uses lists
+-- as intermediate results without operations that \"write\" to a list.
+-- You should think about pull arrays as arrays you can \"pull\" or read from,
+-- zip with and map over. These are arrays that work nicely as arguments to
+-- functions and poorly as arrays to write to.
+--
+-- Pull arrays fit within a larger framework for controlling when
+-- garbage collector memory is allocated; please see "Data.Array.Polarized".
+--
+-- Import this module qualified for clarity and to avoid
 -- name clashes.
 --
 -- == Example
 --
--- > import Data.Array.Polarized
--- > import qualified Data.Array.Polarized.Push as Push
 -- > import qualified Data.Array.Polarized.Pull as Pull
 -- > import Data.Vector (Vector, (!), fromList)
 -- > import qualified Prelude as P
 -- >
+-- > -- | compute the norm of summing three vectors
+-- > -- for vectors x,y,z, this computes || x + y + z ||
 -- > pullArrExample :: IO ()
 -- > pullArrExample = do
 -- >   x <- inputVectorX
@@ -92,11 +101,12 @@ import qualified Unsafe.Linear as Unsafe
 asList :: Array a #-> [a]
 asList = foldr (\x xs -> x:xs) []
 
--- | /!\ Partial! Only works if both arrays have the same length.
+-- | @zipWith f [x1,x2,...] [y1,y2,...] == [f x1 y1, f x2 y2, ...]@
+-- __Partial:__ Only works if both arrays have the same length.
 zipWith :: (a #-> b #-> c) -> Array a #-> Array b #-> Array c
 zipWith f x y = Data.fmap (uncurry f) (zip x y)
 
--- | Fold a pull array into a monoid.
+-- | Fold a pull array using a monoid.
 foldMap :: Monoid m => (a #-> m) -> Array a #-> m
 foldMap f = foldr ((<>) . f) mempty
 
