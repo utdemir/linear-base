@@ -1,10 +1,11 @@
 {-# LANGUAGE LinearTypes #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
--- | This module provides pull arrays
+-- | This module provides pull arrays.
 --
--- Use pull arrays to force fusion in a computation that only uses lists
--- as intermediate results without operations that \"write\" to a list.
+-- Use pull arrays to force fusion (i.e., force GHC to not allocate arrays in
+-- the garbage collector memory) in a computation that only uses lists
+-- as /intermediate/ results without operations that \"write\" to a list.
 -- You should think about pull arrays as arrays you can \"pull\" or read from,
 -- zip with and map over. These are arrays that work nicely as arguments to
 -- functions and poorly as arrays to write to.
@@ -20,6 +21,8 @@
 -- > import qualified Data.Array.Polarized.Pull as Pull
 -- > import Data.Vector (Vector, (!), fromList)
 -- > import qualified Prelude as P
+-- >
+-- > type Pull a = Pull.Array a
 -- >
 -- > -- | compute the norm of summing three vectors
 -- > -- for vectors x,y,z, this computes || x + y + z ||
@@ -61,20 +64,22 @@
 -- > -- | Query from environment
 -- > inputVectorZ :: IO (Vector Int)
 -- > inputVectorZ = return (fromList [negate i | i <- [1..100]])
---
 module Data.Array.Polarized.Pull
   ( Array
+    -- * Construction
+  , fromFunction
+  , fromVector
+  , make
+  , singleton
+    -- * Consumption
+  , toVector
+  , asList
+    -- * Operations
   , zip, zipWith
   , append
-  , make
   , foldr
   , foldMap
   , findLength
-  , asList
-  , singleton
-  , fromFunction
-  , fromVector
-  , toVector
   , split
   , reverse
   )

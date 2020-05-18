@@ -42,9 +42,50 @@
 --
 -- == A toy example
 --
--- @
+-- > import Data.Array.Polarized
+-- > import qualified Data.Array.Polarized.Push as Push
+-- > import qualified Data.Array.Polarized.Pull as Pull
+-- > import qualified Data.Functor.Linear as Linear
+-- > import Data.Vector (Vector, (!), fromList)
+-- > import Prelude hiding ( Num(..), ($) )
+-- >
+-- > type Pull a = Pull.Array a
+-- > type Push a = Push.Array a
+-- >
+-- > pipeline :: Vector Int -> Vector Int -> Vector Int
+-- > pipeline coeff =
+-- >   pushToVector .
+-- >   diff .
+-- >   addCoeffVector .
+-- >   multThree .
+-- >   fromVector'
+-- >   where
+-- >     pushToVector :: Pull Int -> Vector Int
+-- >     pushToVector arr = Push.alloc (transfer arr)
+-- >
+-- >     fromVector' :: Vector Int -> Pull Int
+-- >     fromVector' arr = Pull.fromVector arr
+-- >
+-- >     addCoeffVector :: Pull Int -> Pull Int
+-- >     addCoeffVector arr = addCoeff (Pull.fromVector coeff) arr
+-- >
+-- > multThree :: Pull Int -> Pull Int
+-- > multThree arr = Linear.fmap (* 3) arr
+-- >
+-- > addCoeff :: Pull Int -> Pull Int #-> Pull Int
+-- > addCoeff arr = Pull.zipWith (Linear.+) arr
+-- >
+-- > -- | Takes the difference between elements
+-- > -- which is common in differentials
+-- > diff :: Pull Int -> Pull Int
+-- > diff arr = withLen (Pull.findLength arr)
+-- >   where
+-- >     withLen :: (Int, Pull Int) -> Pull Int
+-- >     withLen (len, arr) =
+-- >       case (Pull.split 1 arr, Pull.split (len - 1) arr) of
+-- >         ((_, tail), (top,_)) -> Pull.zipWith (-) tail top
+-- >
 --
--- @
 --
 -- == Background for the interested
 --
