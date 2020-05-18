@@ -5,7 +5,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE RankNTypes #-}
 
--- | This module provides push arrays
+-- | This module provides push arrays.
 --
 -- These are part of a larger framework for controlling when garbage collector
 -- memory is allocated in computations that use arrays -- please
