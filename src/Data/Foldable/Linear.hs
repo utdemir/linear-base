@@ -8,5 +8,5 @@ module Data.Foldable.Linear
   where
 
 class Foldable t where
-  foldr :: (a #-> b #-> b) -> b #-> t a #-> b
+  foldr :: (a -> b #-> b) -> b #-> t a #-> b
 
