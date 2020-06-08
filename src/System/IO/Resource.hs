@@ -59,8 +59,9 @@ module System.IO.Resource
     -- $files
   , Handle
     -- ** File I/O
-  , openFile 
+  , openFile
     -- ** Working with Handles
+  , stdout
   , hClose
   , hGetChar
   , hPutChar
@@ -172,6 +173,10 @@ instance Control.Monad RIO where
 -- extensible.
 
 newtype Handle = Handle (UnsafeResource System.Handle)
+
+stdout :: Handle
+stdout = Handle (UnsafeResource (-1) System.stdout)
+
 
 -- | See 'System.IO.openFile'
 openFile :: FilePath -> System.IOMode -> RIO Handle
